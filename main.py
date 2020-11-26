@@ -1,5 +1,4 @@
-from Equilibrium import Equilibrium, Coils, PlotEquilibrium, Mesh
-from scipy import interpolate
+from Equilibrium import Equilibrium, Coils
 r1 = 1.0E-8 
 r2 = 0.125 
 z1 = -1.01 
@@ -9,8 +8,4 @@ Nz = 105
 Eq = Equilibrium(r1, r2, z1, z2, Nr, Nz)
 PlotEq = PlotEquilibrium(Eq)
 PlotEq.PlotPsiContour()
-#PlotEq.PlotBContour()
-#PlotEq.PlotPsiBContour()
-MESH = Mesh(Eq, 15, 77, 0.125)
-#MESH.PlotMesh()
 
