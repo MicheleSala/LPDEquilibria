@@ -12,13 +12,11 @@ class Coils:
 	""" 
 	Class for the representation of the external magnetic field coils
 	
-	Input: 
+	Args: 
+		coilName (str): path to the file containing coil data
 	
-	coilName (str): path to the file containing coil data
-	
-	Output:
-	
-	Jc (Ncoils np.array): current density flowing into each coil
+	Return:
+		Jc (array): np.array of length Ncoils containting current density flowing into each coil
 	"""
 	def __init__(self, coilName):
 		""" 
@@ -50,15 +48,18 @@ class Equilibrium:
 	""" 
 	Class to represent the Equilibrium of the machine on a [r1, r2]x[z1, z2] grid
 	
-	Input: 
-	
-	r1 (float)
-	r2 (float)
-	z1 (float)
-	z2(float)
-	Nr (int): Number of points in the radial direction 
-	Nz (int): Number of points in the axial direction
-	Coil (class): 
+	Args: 
+		r1 (float): lower boundary of the computational domain in the r direction
+		r2 (float): upper boundary of the computational domain in the r direction
+		z1 (float): lower boundary of the computational domain in the z direction
+		z2 (float): upper boundary of the computational domain in the z direction 
+		Nr (int): Number of points in the radial direction 
+		Nz (int): Number of points in the axial direction
+		R (float): numpy NrxNz array
+		Z (float): numpy NrxNz array 
+		psi (float): numpy NrxNz array containing the stream function 
+		Br (float): numpy NrxNz array containing the r component of the magnetic field
+		Bz (float): numpy NrxNz array containing the z component of the magnetic fieldq
 	"""
 	def __init__(self, r1, r2, z1, z2, Nr, Nz, Nc = 10):
 		self.__mu0 = 4 * np.pi * 1.0E-07
