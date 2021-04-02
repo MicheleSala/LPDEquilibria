@@ -60,6 +60,9 @@ class Equilibrium:
 		psi (float): numpy NrxNz array containing the stream function 
 		Br (float): numpy NrxNz array containing the r component of the magnetic field
 		Bz (float): numpy NrxNz array containing the z component of the magnetic fieldq
+	
+	Return:
+		Eq (object)
 	"""
 	def __init__(self, r1, r2, z1, z2, Nr, Nz, Nc = 10):
 		self.__mu0 = 4 * np.pi * 1.0E-07
@@ -80,7 +83,7 @@ class Equilibrium:
 		self.Bz = Bz
 	def BuildGrid(self):
 		"""
-		Compute the cartesian grid for the computation
+		Construct cartesian grid in the (R, Z) plane necessary for the computation of the equilibrium 
 		"""
 		r1, r2, z1, z2, Nr, Nz = self.r1, self.r2, self.z1, self.z2, self.Nr, self.Nz
 		r = np.linspace(r1, r2, Nr)
@@ -98,7 +101,7 @@ class Equilibrium:
 		return Rc, Zc, rc, zc
 	def ComputePsi(self):
 		"""
-		Compute the poloidal flux function using the Green Function method
+		Compute the poloidal flux function using the Green Function method of the Grad-Shafranov Equation
 		"""
 		R, Z, Nr, Nz, Nc, Jc, Ncoil, mu0 = self.R, self.Z, self.Nr, self.Nz, self.Nc, self.Coil.Jc, self.Coil.Ncoils, self.__mu0
 		psi_coil = np.zeros((Nz, Nr, Ncoil))
@@ -151,6 +154,15 @@ class Equilibrium:
 class Mesh:
 	"""
 	Class for the definition and construction of a field-aligned structured Mesh
+	
+	Input:
+		Eq (objtect): equilibrium object defining the magnetic equilibrium 
+		m (int): number of point in the radial direction
+		n (int): number of point in the axial direction 
+		Rlim (float): location in the r direction of the limiting surface
+		
+	Return:
+		Mesh (object)
 	""" 
 	def __init__(self, Eq, m, n, Rlim):
 		self.Eq = Eq
@@ -164,6 +176,9 @@ class Mesh:
 		Mesh.PsiLim = PsiLim
 		self.Mesh = Mesh.ComputeGrid(self)
 	def ComputeLastPsi(self):
+		"""
+		Function for the computation of the last magnetic flux surface
+		"""
 		psi, R, Z, LowerPsiValue, Ncont, Rlim = self.Eq.psi, self.Eq.R, self.Eq.Z, self.__LowerPsiValue,  self.__Ncont, self.Rlim
 		ContourLevels = np.linspace(LowerPsiValue, psi.max(), Ncont)
 		Cnt = plt.contour(R, Z,psi, ContourLevels)
@@ -177,6 +192,9 @@ class Mesh:
 				break                
 		return ContourLevels[it - 1]
 	def InterpolatePsi(self, zP, rP, zQuery, ContourLevels):
+		""" 
+		Function for the interpolation of the psi function
+		"""
 		psi = self.Eq.psi
 		for ii in range(0, ContourLevels.size):
 			Cnt = np.array(plt.contour(rP, zP, psi, [ContourLevels[ii]]).allsegs)
@@ -276,7 +294,7 @@ class Mesh:
 
 class PlotEquilibrium: 
 	""" 
-	Class to plot the Equilibrium object
+	Class for plotting the Equilibrium object
 	"""
 	def __init__(self, Eq, Ncont = 100, Dim = 24):
 		self.Equ = Eq
@@ -323,7 +341,17 @@ class PlotEquilibrium:
 		plt.show()
 
 class Resonances:
-	"""Class for the computation of the various resonances in the machine"""
+	"""
+	Class for the computation of the various resonances in the machine
+	
+	Input:
+	
+		OmegaInj (float): frequency of the injected electromagnetic wave
+		Eq (object): equilibrium object 
+		Mesh (object): mesh object
+		neFit (function): function specifying the fitting expression to be used for the electron density
+	
+	"""
 	def __init__(self, OmegaInj, Eq, Mesh, neFit): 
 		self.OmegaInj = OmegaInj
 		self.Eq = Eq
