@@ -289,7 +289,8 @@ class Mesh:
 	def WriteMesh(self): 
 		Mesh = self.Mesh
 		Name = input('Insert Mesh name: ') + '.ASCII'    
-		np.savetxt(Name, Mesh, '%.8E')
+		pathName = 'meshes/' 
+		np.savetxt(pathName + Name, Mesh, '%.8E')
 		print('Saved Mesh in file: ' + Name)        
 
 class PlotEquilibrium: 
