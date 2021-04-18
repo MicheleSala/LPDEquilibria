@@ -1,3 +1,7 @@
+""" 
+The following simple code represent the basic set of operations one needs to perform for the computation of the magnetic equilibrium as well as the corresponding
+field-aligned grid. 
+"""
 from Equilibrium import *
 r1 = 1.0E-8 
 r2 = 0.125 
