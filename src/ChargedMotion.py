@@ -62,16 +62,21 @@ class Particle:
         Method for applying the boundary conditions 
         """
         if x0[0, 0] >= xmax:
-        self.initializeParticleState(x0[0, 0], -v0[0, 0]
+            x0[0, 0] = xmax
+            v0[0, 0] = -v0[0, 0]
+            self.initializeParticleState(x0, v0)
         if x0[0, 0] <= xmin:
-        x0[0, 0] = xmin
-        v0[0, 0] = -v0[0, 0]
+            x0[0, 0] = xmin
+            v0[0, 0] = -v0[0, 0]
+            self.initializeParticleState(x0, v0)
         if x0[1, 0] >= ymax:
-        x0[1, 0] = ymax
-        v0[1, 0] = -v0[1, 0]
+            x0[1, 0] = ymax
+            v0[1, 0] = -v0[1, 0]
+            self.initializeParticleState(x0, v0)
         if x0[1, 0] <= ymin:
-        x0[1, 0] = ymin
-        v0[1, 0] = -v0[1, 0] 
+            x0[1, 0] = ymin
+            v0[1, 0] = -v0[1, 0]
+            self.initializeParticleState(x0, v0)
     
     def printProperties(self):
         """
