@@ -77,6 +77,11 @@ class Particle:
             x0[1, 0] = ymin
             v0[1, 0] = -v0[1, 0]
             self.initializeParticleState(x0, v0)
+    def BorisStepper(self, dt):
+        """
+        Boris stepper method: perform one iteration of the Newton equations
+        """
+        
     
     def printProperties(self):
         """
