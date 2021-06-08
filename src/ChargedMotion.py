@@ -77,10 +77,6 @@ class Particle:
             x0[1, 0] = ymin
             v0[1, 0] = -v0[1, 0]
             self.initializeParticleState(x0, v0)
-    def BorisStepper(self, dt):
-        """
-        Boris stepper method: perform one iteration of the Newton equations
-        """
         
     
     def printProperties(self):
@@ -89,6 +85,31 @@ class Particle:
         """
         print('Particle charge {}: \nParticle mass {}'.format(self.q, self.m))
 
+        
+class ParticlePusher:
+    def __init__(self, Mag, Particle):
+        """
+        Constructor function of the ParticlePusher Class
+        """
+        self.Mag = Mag
+        self.Particle = Particle
+    def BorishPusher(self):
+        """
+        Method which implements the Boris algorithm for particle motion in a given EM field
+        """
+        Particle.CheckBoundaries()
+        Particle, Eq = self.Particle, self.Eq
+        x0, v0 = self.Particle.x0, self.Particle.v0
+        Bx, By = Mag.InterpField(Particle.x0)
+        Bz = np.array(0.)
+        E = np.array([[0., 0., 0.]]).T
+        P = np.array(((0., Bz, -By[0, 0]), (-Bz, 0., Bx[0, 0]), (By[0, 0], -Bx[0, 0], 0.)))
+        v = np.linalg.inv(np.eye(3) + Omega * P / 2.).dot(np.eye(3) - Omega * P / 2.).dot(v0) + np.linalg.inv(np.eye(3) + Omega * P / 2.).dot(e / me * dt * E)
+        x = x0 + v * dt
+        Particle.updateParticleState(x, v)
+        
+        
+        
 class MagneticField(Equilibrium):
     """
     Class for the representation of the magnetic field. Child class of the Equilibrum one
