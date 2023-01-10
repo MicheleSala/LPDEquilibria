@@ -33,7 +33,7 @@ class Coils:
 	@classmethod
 	def from_keyboard(cls):
 		coilName = input('Insert coil file name:')
-		coilName = "../Coils/" + coilName 
+		coilName = "/Users/michele/Desktop/LPDEquilibria/Coils/" + coilName 
 		Coils.__init__(cls, coilName)
 		return cls
 	def ComputeCurrents(self):
@@ -312,7 +312,7 @@ class PlotEquilibrium:
 		ax.set_xlabel('R [m]')
 		ax.set_ylabel('Z [m]')
 		cb = fig.colorbar(cnt, ax=ax)
-		plt.show()
+		# plt.show()
 	def PlotBContour(self):
 		"""
 		Contour plot of B
