@@ -1,19 +1,26 @@
-"""Smoke tests verifying core modules import and basic types are wired up."""
+"""Smoke tests verifying each module imports and exposes its expected class."""
+
+import pytest
 
 
-def test_import_equilibrium():
-    import Equilibrium  # noqa: F401
+@pytest.mark.parametrize(
+    "module_name, class_name",
+    [
+        ("coils", "Coils"),
+        ("equilibrium", "Equilibrium"),
+        ("mesh", "Mesh"),
+        ("plotting", "PlotEquilibrium"),
+        ("resonances", "Resonances"),
+        ("sources", "Sources"),
+    ],
+)
+def test_module_exposes_class(module_name, class_name):
+    module = __import__(module_name)
+    assert hasattr(module, class_name), f"{module_name} missing {class_name}"
 
 
 def test_import_charged_motion():
     import ChargedMotion  # noqa: F401
-
-
-def test_equilibrium_exposes_expected_classes():
-    import Equilibrium
-
-    for name in ("Coils", "Equilibrium", "Mesh", "PlotEquilibrium", "Resonances", "Sources"):
-        assert hasattr(Equilibrium, name), f"Equilibrium module missing {name}"
 
 
 def test_charged_motion_exposes_expected_classes():

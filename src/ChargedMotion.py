@@ -11,7 +11,7 @@ import numpy as np
 import scipy.interpolate
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
-from Equilibrium import Equilibrium
+from equilibrium import Equilibrium
 
 matplotlib.rcParams.update({"font.size": 24, "font.family": "serif", "mathtext.fontset": "stix"})
 
