@@ -138,7 +138,7 @@ class Equilibrium:
                         * ((mu0 / (2 * np.pi)) * np.sqrt(R * Rc[kk, mm]) / k)
                         * ((2 - k2) * K - 2 * E)
                     )
-            psi_coil[:, :, ll] = np.trapz(np.trapz(G, zc), rc)
+            psi_coil[:, :, ll] = np.trapezoid(np.trapezoid(G, zc), rc)
         psi = psi_coil.sum(axis=2)
         return psi
 
@@ -253,7 +253,7 @@ class Mesh:
         return InterpPsi.T
 
     def InterpolateField(self, rQuery, MESH):
-        psi, Bz, R, Z, n, m = self.Eq.psi, self.Eq.Bz, self.Eq.R, self.Eq.Z, self.n, self.m
+        Bz, R, Z, n, m = self.Eq.Bz, self.Eq.R, self.Eq.Z, self.n, self.m
         zQuery = MESH[:, 3]
         BzC = np.zeros(n * (m + 2))
         InterpFunc = scipy.interpolate.RectBivariateSpline(Z[:, 0], R[0, :], Bz)
@@ -276,7 +276,10 @@ class Mesh:
         rValues = R[0, :]
         alpha = 1.8
         overshoot = 1.0e-05
-        func = lambda x: z2 * ((np.tanh(-x)) / (np.tanh(alpha)) * (1 + overshoot)) / (1 + overshoot)
+
+        def func(x):
+            return z2 * ((np.tanh(-x)) / (np.tanh(alpha)) * (1 + overshoot)) / (1 + overshoot)
+
         IndexFunc = np.linspace(-alpha, alpha, 2 * n + 1)
         zQuery = func(IndexFunc)
         InterpPsi = Mesh.InterpolatePsi(self, zValues, rValues, zQuery, ContourLevels)
@@ -389,14 +392,14 @@ class PlotEquilibrium:
         )
         ax.set_xlabel("R [m]")
         ax.set_ylabel("Z [m]")
-        cb = fig.colorbar(cnt, ax=ax)
+        fig.colorbar(cnt, ax=ax)
         # plt.show()
 
     def PlotBContour(self):
         """
         Contour plot of B
         """
-        R, Z, Br, Bz, Ncont = self.Equ.R, self.Equ.Z, self.Equ.Br, self.Equ.Bz, self.Ncont
+        R, Z, Ncont = self.Equ.R, self.Equ.Z, self.Ncont
         B = np.sqrt(self.Equ.Br**2 + self.Equ.Bz**2)
         fig, ax = plt.subplots()
         cnt = ax.contourf(
@@ -404,18 +407,16 @@ class PlotEquilibrium:
         )
         ax.set_xlabel("R [m]")
         ax.set_ylabel("Z [m]")
-        cb = fig.colorbar(cnt, ax=ax)
+        fig.colorbar(cnt, ax=ax)
         plt.show()
 
     def PlotPsiBContour(self):
         """
         Plot psi and B contour on the same figure
         """
-        R, Z, Br, Bz, psi, Ncont = (
+        R, Z, psi, Ncont = (
             self.Equ.R,
             self.Equ.Z,
-            self.Equ.Br,
-            self.Equ.Bz,
             self.Equ.psi,
             self.Ncont,
         )
@@ -430,13 +431,13 @@ class PlotEquilibrium:
             vmin=abs(psi).min(),
             vmax=abs(psi).max(),
         )
-        cb = fig.colorbar(cntPsi, ax=ax[0])
+        fig.colorbar(cntPsi, ax=ax[0])
         ax[0].set_xlabel("R [m]")
         ax[0].set_ylabel("Z [m]")
         cntB = ax[1].contourf(
             R, Z, B, Ncont, cmap=matplotlib.cm.RdGy, vmin=abs(B).min(), vmax=abs(B).max()
         )
-        cb = fig.colorbar(cntB, ax=ax[1])
+        fig.colorbar(cntB, ax=ax[1])
         ax[1].set_xlabel("R [m]")
         ax[1].set_ylabel("Z [m]")
         plt.show()
@@ -500,16 +501,10 @@ class Resonances:
 
     def LocateAxial(self):
         """Method for the computation of the axial location of the resonace"""
-        OmegaInj, Br, Bz, psi, R, Z, e, me, mi, OmegaCE = (
+        OmegaInj, R, Z, OmegaCE = (
             self.OmegaInj,
-            self.Eq.Br,
-            self.Eq.Bz,
-            self.Eq.psi,
             self.Eq.R,
             self.Eq.Z,
-            self.__e,
-            self.__me,
-            self.__mi,
             self.OmegaCE,
         )
         cs = plt.contour(R[0, :], Z[:, 0], OmegaCE, [OmegaInj])
@@ -662,17 +657,13 @@ class Sources:
         self.AxialPoints = Sources.ComputeAxialPoints(self)
 
     def ComputeRadialPoints(self):
-        AxialResPosition, Mesh, n, zmin, zmax = (
-            self.Res.ZResPosition,
+        Mesh, n, zmin, zmax = (
             self.Grid.Mesh,
             self.Grid.n,
             self.zmin,
             self.zmax,
         )
         Shape = np.shape(Mesh)
-        Toll = AxialResPosition * 1.1
-        zMin = AxialResPosition - Toll
-        zMax = AxialResPosition + Toll
         RcentrePoints = Mesh[0 : Shape[0], 2]
         ZcentrePoints = Mesh[0 : Shape[0], 3]
         ZonAxis = ZcentrePoints[0:n]
@@ -693,7 +684,8 @@ class Sources:
         return AxialPoints
 
     def WriteSource(self):
+        # TODO: complete WriteSource implementation (writes source term to file for edge plasma codes)
         RadialPoints, AxialPoints = self.RadialPoints, self.AxialPoints
-        RadialValues = self.RadialDensity(RadialPoints)
-        AxialValues = self.AxialDensity(AxialPoints)
-        l = np.size(RadialPoints)
+        RadialValues = self.RadialDensity(RadialPoints)  # noqa: F841
+        AxialValues = self.AxialDensity(AxialPoints)  # noqa: F841
+        l = np.size(RadialPoints)  # noqa: F841

@@ -1,4 +1,4 @@
-from Equilibrium import *
+from Equilibrium import Equilibrium, Mesh, PlotEquilibrium
 
 r1 = 1.0e-8
 r2 = 0.125
@@ -9,6 +9,6 @@ Nz = 105
 Eq = Equilibrium(r1, r2, z1, z2, Nr, Nz)
 PlotEq = PlotEquilibrium(Eq)
 PlotEq.PlotPsiContour()
-Mesh = Mesh(Eq, 50, 200, 0.125)
-Mesh.PlotMesh()
-Mesh.WriteMesh()
+mesh = Mesh(Eq, 50, 200, 0.125)
+mesh.PlotMesh()
+mesh.WriteMesh()

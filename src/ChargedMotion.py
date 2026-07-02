@@ -8,9 +8,10 @@ Created on Mon Aug 24 15:10:38 2020
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.interpolate
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
-from Equilibrium import *
+from Equilibrium import Equilibrium
 
 matplotlib.rcParams.update({"font.size": 24, "font.family": "serif", "mathtext.fontset": "stix"})
 
