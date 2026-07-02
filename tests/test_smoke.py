@@ -1,13 +1,12 @@
-"""Smoke tests verifying core modules import and basic types are wired up.
-
-Note: ChargedMotion is not covered here because its module body executes a demo
-that reads from stdin. Wrap the demo in `if __name__ == "__main__":` to make
-the module importable, then extend these tests.
-"""
+"""Smoke tests verifying core modules import and basic types are wired up."""
 
 
 def test_import_equilibrium():
     import Equilibrium  # noqa: F401
+
+
+def test_import_charged_motion():
+    import ChargedMotion  # noqa: F401
 
 
 def test_equilibrium_exposes_expected_classes():
@@ -15,3 +14,10 @@ def test_equilibrium_exposes_expected_classes():
 
     for name in ("Coils", "Equilibrium", "Mesh", "PlotEquilibrium", "Resonances", "Sources"):
         assert hasattr(Equilibrium, name), f"Equilibrium module missing {name}"
+
+
+def test_charged_motion_exposes_expected_classes():
+    import ChargedMotion
+
+    for name in ("Particle", "ParticlePusher", "MagneticField"):
+        assert hasattr(ChargedMotion, name), f"ChargedMotion module missing {name}"

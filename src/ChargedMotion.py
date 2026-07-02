@@ -68,6 +68,7 @@ class Particle:
         Method for applying the boundary conditions
         """
         xmin, xmax, ymin, ymax = self.xmin, self.xmax, self.ymin, self.ymax
+        x0, v0 = self.x0, self.v0
         if x0[0, 0] >= xmax:
             x0[0, 0] = xmax
             v0[0, 0] = -v0[0, 0]
@@ -106,12 +107,13 @@ class ParticlePusher:
         """
         particle = self.particle
         particle.checkBoundaries()
-        x0, v0, Omega, q, m = (
+        x0, v0, Omega, q, m, dt = (
             self.particle.x0,
             self.particle.v0,
             self.particle.Omega,
             self.particle.q,
             self.particle.m,
+            self.particle.dt,
         )
         Bx, By = self.mag.InterpField(particle.x0)
         Bz = np.array(0.0)
@@ -147,107 +149,87 @@ class MagneticField(Equilibrium):
         return BxPos, ByPos
 
 
-# Charged particle motion in a given magnetic field
+def main():
+    """Demo: track a charged particle in the computed magnetic field."""
+    r1 = 1.0e-8
+    r2 = 0.125
+    z1 = 0.5
+    z2 = 2.5
+    Nr = 105
+    Nz = 105
+    dt = 1.0e-4
+    Nstep = 1000
+    Npart = 1
+    xx = np.empty((Nstep, Npart))
+    xy = np.empty((Nstep, Npart))
+    xz = np.empty((Nstep, Npart))
+    vx = np.empty((Nstep, Npart))
+    vy = np.empty((Nstep, Npart))
+    vz = np.empty((Nstep, Npart))
+    mag = MagneticField(r1, r2, z1, z2, Nr, Nz)
+    for jj in range(0, Npart):
+        v0 = np.array([[1.0, 1.0, 10.0]]).T
+        x0 = np.array([[0.001, 1.25, 0.01]]).T
+        particle = Particle(1, 9.11e-25, dt)
+        particle.initializeParticleState(x0, v0)
+        particle.initializeSimulationDomain(r1, r2, z1, z2)
+        particlePusher = ParticlePusher(mag, particle)
+        for ii in range(0, Nstep):
+            particlePusher.borishPush()
+            x = particle.x0
+            v = particle.v0
+            print(x)
+            xx[ii, jj] = x[0]
+            xy[ii, jj] = x[1]
+            xz[ii, jj] = x[2]
+            vx[ii, jj] = v[0]
+            vy[ii, jj] = v[1]
+            vz[ii, jj] = v[2]
 
-r1 = 1.0e-8
-r2 = 0.125
-z1 = 0.5
-z2 = 2.5
-Nr = 105
-Nz = 105
-# Eq = Equilibrium(r1, r2, z1, z2, Nr, Nz)
-# PlotEq = PlotEquilibrium(Eq)
-# # PlotEq.PlotPsiContour()
-# X = Eq.R
-# Y = Eq.Z
-v0 = np.array([[10.0, 10.0, 0.0]]).T
-x0 = np.array([[0.07, 1.5, 0.0]]).T
-dt = 1.0e-4
-Nstep = 1000
-Npart = 1
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-# ax = fig.gca()
-xx = np.empty((Nstep, Npart))
-xy = np.empty((Nstep, Npart))
-xz = np.empty((Nstep, Npart))
-vx = np.empty((Nstep, Npart))
-vy = np.empty((Nstep, Npart))
-vz = np.empty((Nstep, Npart))
-mag = MagneticField(r1, r2, z1, z2, Nr, Nz)
-for jj in range(0, Npart):
-    v0 = np.array([[1.0, 1.0, 10.0]]).T
-    x0 = np.array([[0.001, 1.25, 0.01]]).T
-    particle = Particle(1, 9.11e-25, dt)
-    particle.initializeParticleState(x0, v0)
-    particle.initializeSimulationDomain(r1, r2, z1, z2)
-    particlePusher = ParticlePusher(mag, particle)
-    for ii in range(0, Nstep):
-        particlePusher.borishPush()
-        x = particle.x0
-        v = particle.v0
-        print(x)
-        x0 = x
-        v0 = v
-        xx[ii, jj] = x[0]
-        xy[ii, jj] = x[1]
-        xz[ii, jj] = x[2]
-        vx[ii, jj] = v[0]
-        vy[ii, jj] = v[1]
-        vz[ii, jj] = v[2]
-# PlotEq = PlotEquilibrium(Eq)
-# PlotEq.PlotPsiContour()
-fig = plt.figure()
-ax = fig.gca()
-for jj in range(0, Npart):
-    ax.plot(xx[:, jj], xy[:, jj], xz[:, jj], linewidth=0.5)
-# ax.contour(Eq.R, Eq.Z, Eq.psi)
-plt.show()
-r = np.sqrt(xx**2 + xz**2)
-theta = np.arctan2(xz, xx)
-fig = plt.figure()
-plt.polar(xz * 180.0 / np.pi, xx, linewidth=0.1)
-plt.show()
-"""
-Plot bello
-"""
-fig = plt.figure()
-ax = fig.gca()
-for jj in range(0, Npart):
-    ax.plot(xy[:, jj], xx[:, jj], "grey", linewidth=0.3)  # Plot particle position in the x,y plane
-# ContourLevels = np.linspace(np.sqrt(np.abs(Eq.psi.min())), np.sqrt(Eq.psi.max()), 50)
-ContourLevels = np.linspace(np.sqrt(np.abs(mag.psi.min())), 0, 25)
-ContourLevelsPos = np.linspace(0, np.sqrt(mag.psi.max()), 25)
-cnt = ax.contour(
-    mag.R, mag.Z, mag.psi, -(ContourLevels**2), cmap=matplotlib.cm.RdGy, linewidths=1.0
-)
-cnt = ax.contour(
-    mag.R, mag.Z, mag.psi, ContourLevelsPos**2, cmap=matplotlib.cm.RdGy, linewidths=1.0
-)
-plt.show()
+    fig = plt.figure()
+    ax = fig.gca()
+    for jj in range(0, Npart):
+        ax.plot(xx[:, jj], xy[:, jj], xz[:, jj], linewidth=0.5)
+    plt.show()
 
-# 3d plot trajectory
-fig = plt.figure()
-ax = plt.axes(projection="3d")
-ax.grid(False)
-for jj in range(0, Npart):
-    ax.plot(xx[:, jj], xy[:, jj], xz[:, jj], "grey", linewidth=0.5)
-ContourLevels = np.linspace(np.sqrt(np.abs(mag.psi.min())), 0, 25)
-ContourLevelsPos = np.linspace(0, np.sqrt(mag.psi.max()), 25)
-cnt = ax.contour(
-    mag.R, mag.Z, mag.psi, -(ContourLevels**2), cmap=matplotlib.cm.RdGy, linewidths=0.8
-)
-cnt = ax.contour(
-    mag.R, mag.Z, mag.psi, ContourLevelsPos**2, cmap=matplotlib.cm.RdGy, linewidths=0.8
-)
-ax.set_xticks([])
-ax.set_yticks([])
-ax.set_zticks([])
-plt.show()
-# Guiding centre
-B = np.array([mag.Br, mag.Bz, 0.0])
-b = B / np.linalg.norm(B)
-e = -1.6e-19
-me = 9.11e-25
-Omega = e * B / me
-R = x - (1.0 / Omega) * np.cross(b, v)
+    fig = plt.figure()
+    plt.polar(xz * 180.0 / np.pi, xx, linewidth=0.1)
+    plt.show()
+
+    # Plot bello
+    fig = plt.figure()
+    ax = fig.gca()
+    for jj in range(0, Npart):
+        ax.plot(xy[:, jj], xx[:, jj], "grey", linewidth=0.3)
+    ContourLevels = np.linspace(np.sqrt(np.abs(mag.psi.min())), 0, 25)
+    ContourLevelsPos = np.linspace(0, np.sqrt(mag.psi.max()), 25)
+    ax.contour(mag.R, mag.Z, mag.psi, -(ContourLevels**2), cmap=matplotlib.cm.RdGy, linewidths=1.0)
+    ax.contour(mag.R, mag.Z, mag.psi, ContourLevelsPos**2, cmap=matplotlib.cm.RdGy, linewidths=1.0)
+    plt.show()
+
+    # 3d plot trajectory
+    fig = plt.figure()
+    ax = plt.axes(projection="3d")
+    ax.grid(False)
+    for jj in range(0, Npart):
+        ax.plot(xx[:, jj], xy[:, jj], xz[:, jj], "grey", linewidth=0.5)
+    ContourLevels = np.linspace(np.sqrt(np.abs(mag.psi.min())), 0, 25)
+    ContourLevelsPos = np.linspace(0, np.sqrt(mag.psi.max()), 25)
+    ax.contour(mag.R, mag.Z, mag.psi, -(ContourLevels**2), cmap=matplotlib.cm.RdGy, linewidths=0.8)
+    ax.contour(mag.R, mag.Z, mag.psi, ContourLevelsPos**2, cmap=matplotlib.cm.RdGy, linewidths=0.8)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
+    plt.show()
+
+    # Guiding centre
+    B = np.array([mag.Br, mag.Bz, 0.0])
+    b = B / np.linalg.norm(B)
+    e = -1.6e-19
+    me = 9.11e-25
+    Omega = e * B / me
+    R = x - (1.0 / Omega) * np.cross(b, v)  # noqa: F841
+
+
+if __name__ == "__main__":
+    main()
