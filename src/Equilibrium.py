@@ -1,11 +1,11 @@
-import numpy as np
-import scipy
-from scipy import interpolate
-from scipy.special import ellipk, ellipe
 import matplotlib
-import numpy.matlib
 import matplotlib.pyplot as plt
+import numpy as np
+import numpy.matlib
+import scipy
 import scipy.interpolate
+from scipy import interpolate
+from scipy.special import ellipe, ellipk
 
 matplotlib.rcParams.update({"font.size": 18, "font.family": "serif", "mathtext.fontset": "stix"})
 
@@ -533,15 +533,15 @@ class Resonances:
         )
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 10))
         ax[0].contour(R[0, :], Z[:, 0], OmegaCE, [OmegaInj])
-        ax[0].set_title("$\Omega_{CE}$")
+        ax[0].set_title(r"$\Omega_{CE}$")
         ax[0].set_xlabel("R [m]")
         ax[0].set_ylabel("Z [m]")
         ax[1].contour(R[0, :], Z[:, 0], OmegaUH, [OmegaInj])
-        ax[1].set_title("$\Omega_{UH}$")
+        ax[1].set_title(r"$\Omega_{UH}$")
         ax[1].set_xlabel("R [m]")
         ax[1].set_ylabel("Z [m]")
         ax[2].contour(R[0, :], Z[:, 0], OmegaLH, [OmegaInj])
-        ax[2].set_title("$\Omega_{LH}$")
+        ax[2].set_title(r"$\Omega_{LH}$")
         ax[2].set_xlabel("R [m]")
         ax[2].set_ylabel("Z [m]")
         plt.show()
@@ -560,11 +560,11 @@ class Resonances:
         )
         fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 10))
         ax[0].contour(R[0, :], Z[:, 0], OmegaC1, [OmegaInj])
-        ax[0].set_title("$\Omega_{C1}$")
+        ax[0].set_title(r"$\Omega_{C1}$")
         ax[0].set_xlabel("R [m]")
         ax[0].set_ylabel("Z [m]")
         ax[1].contour(R[0, :], Z[:, 0], OmegaC2, [OmegaInj])
-        ax[1].set_title("$\Omega_{C2}$")
+        ax[1].set_title(r"$\Omega_{C2}$")
         ax[1].set_xlabel("R [m]")
         ax[1].set_ylabel("Z [m]")
         fig.tight_layout()
@@ -615,7 +615,7 @@ class Resonances:
         Zc = Zc.reshape(m + 2, n)
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 10))
         ax[0].contour(Rc, Zc, OmegaCEGrid, [OmegaInj])
-        ax[0].set_title("$\Omega_{CE}$")
+        ax[0].set_title(r"$\Omega_{CE}$")
         ax[0].set_xlabel("R [m]")
         ax[0].set_ylabel("Z [m]")
         for ii in range(0, m + 3):
@@ -625,7 +625,7 @@ class Resonances:
             Points = Points + n * 5
         Points = n * 5
         ax[1].contour(Rc, Zc, OmegaUHGrid, [OmegaInj])
-        ax[1].set_title("$\Omega_{UH}$")
+        ax[1].set_title(r"$\Omega_{UH}$")
         ax[1].set_xlabel("R [m]")
         ax[1].set_ylabel("Z [m]")
         for ii in range(0, m + 3):
@@ -635,7 +635,7 @@ class Resonances:
             Points = Points + n * 5
         Points = n * 5
         ax[2].contour(Rc, Zc, OmegaLHGrid, [OmegaInj])
-        ax[2].set_title("$\Omega_{LH}$")
+        ax[2].set_title(r"$\Omega_{LH}$")
         ax[2].set_xlabel("R [m]")
         ax[2].set_ylabel("Z [m]")
         for ii in range(0, m + 3):

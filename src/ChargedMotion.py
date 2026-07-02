@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Aug 24 15:10:38 2020
 
 @author: michele
 """
 
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
-from mpl_toolkits import mplot3d
+
 from Equilibrium import *
-from scipy import interpolate
 
 matplotlib.rcParams.update({"font.size": 24, "font.family": "serif", "mathtext.fontset": "stix"})
 
@@ -90,7 +88,7 @@ class Particle:
         """
         Function for prnting the particle properties, i.e. charge and mass
         """
-        print("Particle charge {}: \nParticle mass {}".format(self.q, self.m))
+        print(f"Particle charge {self.q}: \nParticle mass {self.m}")
 
 
 class ParticlePusher:
