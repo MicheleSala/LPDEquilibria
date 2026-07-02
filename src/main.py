@@ -1,7 +1,8 @@
 from Equilibrium import *
-r1 = 1.0E-8 
-r2 = 0.125 
-z1 = -1.01 
+
+r1 = 1.0e-8
+r2 = 0.125
+z1 = -1.01
 z2 = 1.01
 Nr = 105
 Nz = 105
