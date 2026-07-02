@@ -1,4 +1,6 @@
-from Equilibrium import Equilibrium, Mesh, PlotEquilibrium
+from equilibrium import Equilibrium
+from mesh import Mesh
+from plotting import PlotEquilibrium
 
 r1 = 1.0e-8
 r2 = 0.125
